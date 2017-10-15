@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Instant Face Unlock</string>
+    <string name="title_activity_main">IFU</string>
+
+    <string-array name="delay_array">
+        <item>None</item>
+        <item>1 Second</item>
+        <item>2 Seconds</item>
+        <item>3 Seconds</item>
+        <item>5 Seconds</item>
+        <item>10 Seconds</item>
+    </string-array>
+
+    <string name="pref_file">instant_unlock_settings</string>
+    <string name="twitter">https://twitter.com/SamOfStenner</string>
+    <string name="xda_thread">https://forum.xda-developers.com/xposed/modules/xposed-instant-unlock-t3688329#post74144137</string>
+
+    <string name="info">
+        • Force Unlock: Will unlock regardless of what\'s on the lock screen\n\n
+        • Allow Exceptions: Won\'t unlock if there are exceptions on the lock screen\n\n
+        • Exceptions: Any kind of notification element\n\n
+        • Music: If any media controller is active (such as Spotify or Google Play Music), auto-unlock won\'t activate\n\n
+        • Dismissables: If there are notifications that can be dismissed, auto-unlock won\'t activate\n\n
+        • Allow Non-Dismissables: Same as above, but if for non-dismissable notifications\n\n
+        • Vibration: Will vibrate once the device is auto-unlocked\n\n
+        • Duration: How long the vibration lasts in milliseconds\n\n
+        • Delay: Will auto-unlock your device a specified number of seconds after face scan is completed
+    </string>
+
+    <string name="delay_notice">Are you sure?</string>
+    <string name="settings_reset">Preferences reset</string>
+
+    <string name="sd_card_error">
+        Instant Face Unlock has been installed on an SD card. In order to work properly, it must be moved onto your internal storage.
+        However, because the app has been opened before you moved it, you need to uninstall it completely. Once it is installed again,
+        move it from your SD card to your internal storage BEFORE doing a reboot. I hope to fix this in a future update, apologies
+        for the inconvenience.
+    </string>
+
+</resources>

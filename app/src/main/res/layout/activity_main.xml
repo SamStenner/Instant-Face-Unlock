@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.samstenner.instantunlock.UnlockInterface">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_weight="1"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:subtitle="by Sam Stenner"
+            app:title="Instant Face Unlock" />
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabTwitter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="15dp"
+        android:clickable="true"
+        app:backgroundTint="@color/colorTeal"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/twitter" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/appBarLayout">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/lblDelay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/spinnerDelay"
+                android:layout_below="@+id/lblVibDuration"
+                android:layout_marginTop="15dp"
+                android:text="Delay" />
+
+            <TextView
+                android:id="@+id/lblPrefs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/boxNonDismiss"
+                android:layout_below="@+id/boxNonDismiss"
+                android:layout_marginTop="15dp"
+                android:text="Preferences" />
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/lblHostility"
+                android:layout_below="@+id/lblHostility"
+                android:layout_marginTop="3dp">
+
+                <RadioButton
+                    android:id="@+id/radioForce"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:tag="FORCE"
+                    android:text="Force Unlock" />
+
+                <RadioButton
+                    android:id="@+id/radioNotif"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="NOTIF"
+                    android:text="Allow Exceptions" />
+
+            </RadioGroup>
+
+            <CheckBox
+                android:id="@+id/boxDismiss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/boxMusic"
+                android:layout_below="@+id/boxMusic"
+                android:checked="false"
+                android:tag="DISMISSABLE"
+                android:text="Allow Dismissables" />
+
+            <CheckBox
+                android:id="@+id/boxVibrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/lblPrefs"
+                android:layout_below="@+id/lblPrefs"
+                android:layout_marginTop="5dp"
+                android:tag="DISMISSABLE"
+                android:text="Vibrate Upon Unlock" />
+
+            <TextView
+                android:id="@+id/lblVibDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/boxVibrate"
+                android:layout_below="@+id/boxVibrate"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="5dp"
+                android:text="Duration:" />
+
+            <Button
+                android:id="@+id/btnTheme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/spinnerDelay"
+                android:layout_below="@+id/btnForum"
+                android:text="Theme" />
+
+            <TextView
+                android:id="@+id/lblHostility"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/switchEnabled"
+                android:layout_below="@+id/switchEnabled"
+                android:layout_marginTop="20dp"
+                android:text="Hostility" />
+
+            <SeekBar
+                android:id="@+id/skVibDuration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/btnForum"
+                android:layout_below="@+id/boxVibrate"
+                android:layout_marginLeft="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/lblVibDuration"
+                android:max="500"
+                android:progress="120" />
+
+            <TextView
+                android:id="@+id/lblNotifs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/radioGroup"
+                android:layout_below="@+id/radioGroup"
+                android:layout_marginTop="15dp"
+                android:text="Exceptions" />
+
+            <Switch
+                android:id="@+id/switchEnabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/appBarLayout"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:checked="true"
+                android:text="Enabled "
+                tools:checked="true" />
+
+            <TextView
+                android:id="@+id/lblNameVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:foregroundGravity="right"
+                android:gravity="right"
+                android:text="Version: 1.0" />
+
+            <Button
+                android:id="@+id/btnForum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/btnReset"
+                android:layout_alignStart="@+id/btnTheme"
+                android:layout_below="@+id/spinnerDelay"
+                android:layout_marginTop="30dp"
+                android:text="XDA Thread" />
+
+            <CheckBox
+                android:id="@+id/boxNonDismiss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/boxDismiss"
+                android:layout_below="@+id/boxDismiss"
+                android:tag="DISMISSABLE"
+                android:text="Allow Non-Dismissables" />
+
+            <CheckBox
+                android:id="@+id/boxMusic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/lblNotifs"
+                android:layout_below="@+id/lblNotifs"
+                android:layout_marginTop="3dp"
+                android:tag="MUSIC"
+                android:text="Allow Music" />
+
+            <Spinner
+                android:id="@+id/spinnerDelay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/boxNonDismiss"
+                android:layout_alignStart="@+id/boxNonDismiss"
+                android:layout_below="@+id/lblDelay"
+                android:layout_marginTop="3dp"
+                android:entries="@array/delay_array" />
+
+            <Button
+                android:id="@+id/btnInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/btnTheme"
+                android:layout_alignBottom="@+id/btnTheme"
+                android:layout_alignEnd="@+id/spinnerDelay"
+                android:layout_toEndOf="@+id/btnTheme"
+                android:text="Help" />
+
+            <Button
+                android:id="@+id/btnReset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toEndOf="@+id/btnInfo"
+                android:text="Reset" />
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>
