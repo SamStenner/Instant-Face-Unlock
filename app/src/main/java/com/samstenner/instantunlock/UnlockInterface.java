@@ -194,6 +194,15 @@ public class UnlockInterface extends Activity {
             }
         });
 
+        (findViewById(R.id.fabDonate)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(getString(R.string.donate)));
+                startActivity(browserIntent);
+            }
+        });
+
         (findViewById(R.id.btnReset)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

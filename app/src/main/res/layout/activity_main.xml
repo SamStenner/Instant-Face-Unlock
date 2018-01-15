@@ -39,6 +39,19 @@
         app:fabSize="normal"
         app:srcCompat="@drawable/twitter" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabDonate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="80dp"
+        android:layout_marginRight="15dp"
+        android:clickable="true"
+        app:backgroundTint="@color/colorTeal"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/donate" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -183,6 +196,16 @@
                 android:foregroundGravity="right"
                 android:gravity="right"
                 android:text="Version: 1.0" />
+
+            <TextView
+                android:id="@+id/lblOreo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/switchEnabled"
+                android:layout_alignEnd="@+id/lblNameVersion"
+                android:foregroundGravity="right"
+                android:gravity="right"
+                android:text="Private Oreo Build" />
 
             <Button
                 android:id="@+id/btnForum"

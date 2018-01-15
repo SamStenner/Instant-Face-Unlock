@@ -13,6 +13,7 @@
 
     <string name="pref_file">instant_unlock_settings</string>
     <string name="twitter">https://twitter.com/SamOfStenner</string>
+    <string name="donate">https://paypal.me/samstenner</string>
     <string name="xda_thread">https://forum.xda-developers.com/xposed/modules/xposed-instant-unlock-t3688329#post74144137</string>
 
     <string name="info">
