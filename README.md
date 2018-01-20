@@ -15,3 +15,9 @@ Use the repo found at: http://repo.xposed.info/module/com.samstenner.instantunlo
 
 Once installed, reboot. That's all!
 Note: If the app installs to an SD Card, you need to move it to your internal storage, and THEN do a reboot.
+
+## Meta
+
+Twitter: https://twitter.com/SamOfStenner
+
+Donate: paypal.me/samstenner
