@@ -33,7 +33,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
         android:clickable="true"
         app:backgroundTint="@color/colorTeal"
         app:fabSize="normal"
@@ -46,7 +46,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="80dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
         android:clickable="true"
         app:backgroundTint="@color/colorTeal"
         app:fabSize="normal"
@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignStart="@+id/boxNonDismiss"
-                android:layout_below="@+id/boxNonDismiss"
+                android:layout_below="@+id/switchSense"
                 android:layout_marginTop="15dp"
                 android:text="Preferences" />
 
@@ -92,6 +92,8 @@
                     android:id="@+id/radioForce"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/radioGroup"
+                    android:layout_alignTop="@+id/radioGroup"
                     android:tag="FORCE"
                     android:text="Force Unlock" />
 
@@ -197,16 +199,6 @@
                 android:gravity="right"
                 android:text="Version: 1.0" />
 
-            <TextView
-                android:id="@+id/lblOreo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/lblNameVersion"
-                android:layout_toEndOf="@+id/skVibDuration"
-                android:foregroundGravity="right"
-                android:gravity="right"
-                android:text="Private Oreo Build" />
-
             <Button
                 android:id="@+id/btnForum"
                 android:layout_width="wrap_content"
@@ -260,9 +252,20 @@
                 android:id="@+id/btnReset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
+                android:layout_alignBaseline="@+id/btnInfo"
+                android:layout_alignBottom="@+id/btnInfo"
                 android:layout_toEndOf="@+id/btnInfo"
                 android:text="Reset" />
+
+            <Switch
+                android:id="@+id/switchSense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/boxNonDismiss"
+                android:layout_below="@+id/boxNonDismiss"
+                android:layout_marginTop="6dp"
+                android:text="Reveal Sensitive Notifications " />
+
         </RelativeLayout>
     </ScrollView>
 

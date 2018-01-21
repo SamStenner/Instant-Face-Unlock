@@ -145,8 +145,6 @@ public class UnlockManager implements IXposedHookLoadPackage {
                     XposedHelpers.callMethod(controller, "dismiss");
                 } else if (buildVersion >= 26) {
                     XposedHelpers.callMethod(controller, "dismiss", (Object)null);
-                    // Alternative:
-                    // XposedHelpers.callMethod(statusBar, "executeRunnableDismissingKeyguard", true, false, true);
                 } else {
                     XposedHelpers.callMethod(controller, "dismiss", false);
                 }

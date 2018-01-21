@@ -286,14 +286,13 @@ public class UnlockInterface extends Activity {
             }
         }
         editor.commit();
-
         String dir = getBaseContext().getApplicationInfo().dataDir + "/shared_prefs/" + prefFile + ".xml";
+        //String dir = getDataDir().toString() + "/shared_prefs/" + prefFile + ".xml";
         File prefsFile = new File(dir);
         if (prefsFile.exists()) {
             prefsFile.setWritable(true, false);
             prefsFile.setReadable(true, false);
         }
-
     }
 
     private void makeTheme(){
