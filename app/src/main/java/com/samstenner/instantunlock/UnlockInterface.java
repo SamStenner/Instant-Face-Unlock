@@ -10,6 +10,7 @@ import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+
+import de.robv.android.xposed.XposedBridge;
 
 public class UnlockInterface extends Activity {
 
@@ -111,9 +114,6 @@ public class UnlockInterface extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 updatePrefs("delay", position);
-                if (position != 0 && spinnerTouched) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.delay_notice), Toast.LENGTH_SHORT).show();
-                }
                 spinnerTouched = true;
             }
             @Override
@@ -287,7 +287,7 @@ public class UnlockInterface extends Activity {
         }
         editor.commit();
 
-        String dir = getDataDir().toString() + "/shared_prefs/" + prefFile + ".xml";
+        String dir = getBaseContext().getApplicationInfo().dataDir + "/shared_prefs/" + prefFile + ".xml";
         File prefsFile = new File(dir);
         if (prefsFile.exists()) {
             prefsFile.setWritable(true, false);

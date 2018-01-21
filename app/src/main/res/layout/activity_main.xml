@@ -27,7 +27,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabTwitter"
+        android:id="@+id/fabDonate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -37,10 +37,10 @@
         android:clickable="true"
         app:backgroundTint="@color/colorTeal"
         app:fabSize="normal"
-        app:srcCompat="@drawable/twitter" />
+        app:srcCompat="@drawable/donate" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabDonate"
+        android:id="@+id/fabTwitter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -50,7 +50,7 @@
         android:clickable="true"
         app:backgroundTint="@color/colorTeal"
         app:fabSize="normal"
-        app:srcCompat="@drawable/donate" />
+        app:srcCompat="@drawable/twitter" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -60,7 +60,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/lblDelay"
@@ -201,8 +201,8 @@
                 android:id="@+id/lblOreo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/switchEnabled"
-                android:layout_alignEnd="@+id/lblNameVersion"
+                android:layout_below="@+id/lblNameVersion"
+                android:layout_toEndOf="@+id/skVibDuration"
                 android:foregroundGravity="right"
                 android:gravity="right"
                 android:text="Private Oreo Build" />

@@ -1,12 +1,20 @@
 package com.samstenner.instantunlock;
 
+import android.app.Activity;
 import android.app.AndroidAppHelper;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.lang.reflect.Method;
+import java.security.spec.ECField;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -40,6 +48,11 @@ public class UnlockManager implements IXposedHookLoadPackage {
         if (!lpparam.packageName.equals(clsSystemUI))
             return;
 
+        if (Build.VERSION.SDK_INT >= 26) {
+            clsKGMonitor = "com.android.systemui.statusbar.policy.KeyguardMonitorImpl";
+            clsStatusBar = "com.android.systemui.statusbar.phone.StatusBar";
+        }
+
         // region Mediator
         findAndHookMethod(clsKGMediator, lpparam.classLoader, "setupLocked", new XC_MethodHook() {
             @Override
@@ -48,6 +61,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
             }
         });
         // endregion
+
 
         // region Monitor
         findAndHookMethod(clsKGMonitor, lpparam.classLoader, "notifyKeyguardChanged", new XC_MethodHook() {
@@ -82,7 +96,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
 
         // region Media
         XposedHelpers.findAndHookMethod(clsStatusBar, lpparam.classLoader,
-                "updateMediaMetaData", boolean.class, boolean.class, new XC_MethodHook() {
+                "start", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
                         if (statusBar == null) {
@@ -91,7 +105,10 @@ public class UnlockManager implements IXposedHookLoadPackage {
                     }
                 });
         // endregion
+
     }
+
+
 
     private static boolean canUnlock(String unlockType){
         if (unlockType.equals("FORCE"))
@@ -122,18 +139,21 @@ public class UnlockManager implements IXposedHookLoadPackage {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                switch (Build.VERSION.SDK_INT) {
-                    case 24:
-                        XposedHelpers.callMethod(controller, "dismiss");
-                        break;
-                    default:
-                        XposedHelpers.callMethod(controller, "dismiss", false);
-                        break;
+                int buildVersion = Build.VERSION.SDK_INT;
+                XposedBridge.log(Integer.toString(buildVersion));
+                if (buildVersion == 24) {
+                    XposedHelpers.callMethod(controller, "dismiss");
+                } else if (buildVersion >= 26) {
+                    XposedHelpers.callMethod(controller, "dismiss", (Object)null);
+                    // Alternative:
+                    // XposedHelpers.callMethod(statusBar, "executeRunnableDismissingKeyguard", true, false, true);
+                } else {
+                    XposedHelpers.callMethod(controller, "dismiss", false);
                 }
                 if (vibration) {
-                    Vibrator v = (Vibrator) AndroidAppHelper.currentApplication().getSystemService(Context.VIBRATOR_SERVICE);
-                    if (v.hasVibrator()) {
-                        v.vibrate(vibDuration);
+                    Vibrator vib = (Vibrator) AndroidAppHelper.currentApplication().getSystemService(Context.VIBRATOR_SERVICE);
+                    if (vib.hasVibrator()) {
+                        vib.vibrate(vibDuration);
                     }
                 }
             }
