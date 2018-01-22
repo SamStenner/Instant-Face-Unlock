@@ -36,6 +36,7 @@ public class UnlockInterface extends Activity {
     private CheckBox boxDyanmic;
     private CheckBox boxStatic;
     private CheckBox[] boxNotifsGroup;
+    private Switch switchSensi;
     private CheckBox boxVibrate;
     private int checkedCount;
     private SeekBar skVibDuration;
@@ -70,6 +71,7 @@ public class UnlockInterface extends Activity {
                     boxMusic.setChecked(false);
                     boxDyanmic.setChecked(true);
                     boxStatic.setChecked(false);
+
                 }
             }
         });
@@ -81,6 +83,14 @@ public class UnlockInterface extends Activity {
                 updatePrefs("enabled", isChecked);
                 setExceptions(isChecked);
                 setMain(isChecked);
+            }
+        });
+
+        switchSensi = (Switch) findViewById(R.id.switchSensi);
+        switchSensi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                updatePrefs("sensitive", isChecked);
             }
         });
 
@@ -230,6 +240,7 @@ public class UnlockInterface extends Activity {
         for (CheckBox box : boxNotifsGroup){
             box.setEnabled(isEnabled);
         }
+        switchSensi.setEnabled(isEnabled);
     }
 
     private void setMain(boolean isEnabled){
@@ -253,7 +264,8 @@ public class UnlockInterface extends Activity {
     private void readPrefs(){
         SharedPreferences prefs = getSharedPreferences(prefFile, Context.MODE_PRIVATE);
         spinnerDelay.setSelection(prefs.getInt("delay", 0));
-        switchEnabled.setChecked((prefs.getBoolean("enabled", true)));
+        switchEnabled.setChecked(prefs.getBoolean("enabled", true));
+        switchSensi.setChecked(prefs.getBoolean("sensitive", true));
         boxVibrate.setChecked(prefs.getBoolean("vibrate", false));
         skVibDuration.setProgress(prefs.getInt("vib_duration", 120));
         if (!boxVibrate.isChecked()) skVibDuration.setEnabled(false);
@@ -321,7 +333,7 @@ public class UnlockInterface extends Activity {
                     }).setCancelable(false).show();
         }
         try {
-            String directory = getDataDir().toString();
+            String directory = getBaseContext().getApplicationInfo().dataDir.toString();
             File main = new File(directory);
             main.setReadable(true, false);
             main.setWritable(true, false);

@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignStart="@+id/boxNonDismiss"
-                android:layout_below="@+id/switchSense"
+                android:layout_below="@+id/switchSensi"
                 android:layout_marginTop="15dp"
                 android:text="Preferences" />
 
@@ -258,7 +258,7 @@
                 android:text="Reset" />
 
             <Switch
-                android:id="@+id/switchSense"
+                android:id="@+id/switchSensi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignStart="@+id/boxNonDismiss"
