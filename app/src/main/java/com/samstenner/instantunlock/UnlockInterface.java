@@ -10,7 +10,6 @@ import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -26,11 +25,10 @@ import android.widget.Toast;
 
 import java.io.File;
 
-import de.robv.android.xposed.XposedBridge;
-
 public class UnlockInterface extends Activity {
 
     private Switch switchEnabled;
+    private Switch switchFast;
     private RadioGroup radioGroup;
     private CheckBox boxMusic;
     private CheckBox boxDyanmic;
@@ -43,7 +41,6 @@ public class UnlockInterface extends Activity {
     private Spinner spinnerDelay;
     private boolean darkTheme;
     private String radioTag;
-    private boolean spinnerTouched;
     private String prefFile;
 
     @Override
@@ -51,14 +48,13 @@ public class UnlockInterface extends Activity {
 
         checkedCount = 0;
         radioTag = "FORCE";
-        spinnerTouched = false;
         prefFile = getString(R.string.pref_file);
 
         makeTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        radioGroup = findViewById(R.id.radioGrpAgro);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
@@ -68,15 +64,11 @@ public class UnlockInterface extends Activity {
                     setExceptions(false);
                 } else {
                     setExceptions(true);
-                    boxMusic.setChecked(false);
-                    boxDyanmic.setChecked(true);
-                    boxStatic.setChecked(false);
-
                 }
             }
         });
 
-        switchEnabled = (Switch) findViewById(R.id.switchEnabled);
+        switchEnabled = findViewById(R.id.switchEnabled);
         switchEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -86,7 +78,15 @@ public class UnlockInterface extends Activity {
             }
         });
 
-        switchSensi = (Switch) findViewById(R.id.switchSensi);
+        switchFast = findViewById(R.id.switchFast);
+        switchFast.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                updatePrefs("fast", isChecked);
+            }
+        });
+
+        switchSensi = findViewById(R.id.switchSensi);
         switchSensi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -94,7 +94,7 @@ public class UnlockInterface extends Activity {
             }
         });
 
-        boxMusic = (CheckBox) findViewById(R.id.boxMusic);
+        boxMusic = findViewById(R.id.boxMusic);
         boxMusic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -102,7 +102,7 @@ public class UnlockInterface extends Activity {
             }
         });
 
-        boxDyanmic = (CheckBox) findViewById(R.id.boxDismiss);
+        boxDyanmic = findViewById(R.id.boxDismiss);
         boxDyanmic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -110,7 +110,7 @@ public class UnlockInterface extends Activity {
             }
         });
 
-        boxStatic = (CheckBox) findViewById(R.id.boxNonDismiss);
+        boxStatic = findViewById(R.id.boxNonDismiss);
         boxStatic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -119,12 +119,11 @@ public class UnlockInterface extends Activity {
         });
         boxNotifsGroup = new CheckBox[] { boxMusic, boxDyanmic, boxStatic };
 
-        spinnerDelay = (Spinner) findViewById(R.id.spinnerDelay);
+        spinnerDelay = findViewById(R.id.spinnerDelay);
         spinnerDelay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 updatePrefs("delay", position);
-                spinnerTouched = true;
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -132,7 +131,7 @@ public class UnlockInterface extends Activity {
             }
         });
 
-        boxVibrate = (CheckBox) findViewById(R.id.boxVibrate);
+        boxVibrate = findViewById(R.id.boxVibrate);
         boxVibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -141,7 +140,7 @@ public class UnlockInterface extends Activity {
             }
         });
 
-        skVibDuration = (SeekBar) findViewById(R.id.skVibDuration);
+        skVibDuration = findViewById(R.id.skVibDuration);
         skVibDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -160,7 +159,7 @@ public class UnlockInterface extends Activity {
             }
         });
 
-        Button btnTheme = (Button) findViewById(R.id.btnTheme);
+        Button btnTheme = findViewById(R.id.btnTheme);
         btnTheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -247,6 +246,7 @@ public class UnlockInterface extends Activity {
         for (int i = 0; i < radioGroup.getChildCount(); i++){
             (radioGroup.getChildAt(i)).setEnabled(isEnabled);
         }
+        switchFast.setEnabled(isEnabled);
         radioGroup.setEnabled(isEnabled);
         boxVibrate.setEnabled(isEnabled);
         skVibDuration.setEnabled(isEnabled);
@@ -263,11 +263,12 @@ public class UnlockInterface extends Activity {
 
     private void readPrefs(){
         SharedPreferences prefs = getSharedPreferences(prefFile, Context.MODE_PRIVATE);
-        spinnerDelay.setSelection(prefs.getInt("delay", 0));
         switchEnabled.setChecked(prefs.getBoolean("enabled", true));
-        switchSensi.setChecked(prefs.getBoolean("sensitive", true));
+        switchFast.setChecked(prefs.getBoolean("fast", true));
+        switchSensi.setChecked(prefs.getBoolean("sensitive", false));
         boxVibrate.setChecked(prefs.getBoolean("vibrate", false));
         skVibDuration.setProgress(prefs.getInt("vib_duration", 120));
+        spinnerDelay.setSelection(prefs.getInt("delay", 0));
         if (!boxVibrate.isChecked()) skVibDuration.setEnabled(false);
         for (int i = 0; i < radioGroup.getChildCount(); i++){
             RadioButton radioBtn = (RadioButton) radioGroup.getChildAt(i);
@@ -275,6 +276,9 @@ public class UnlockInterface extends Activity {
                 radioBtn.setChecked(true);
             }
         }
+        boxMusic.setChecked(prefs.getBoolean("music", false));
+        boxDyanmic.setChecked(prefs.getBoolean("dynamic", true));
+        boxStatic.setChecked(prefs.getBoolean("static", false));
     }
 
     private void updatePrefs(String pref, Object value) {

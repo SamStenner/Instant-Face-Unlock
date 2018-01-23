@@ -17,12 +17,16 @@
     <string name="xda_thread">https://forum.xda-developers.com/xposed/modules/xposed-instant-unlock-t3688329#post74144137</string>
 
     <string name="info">
+        • Enabled: Whether IFU is enabled or not\n\n
+        • Fast: When enabled, the unlocking animation is skipped, making the unlock faster\n\n
         • Force Unlock: Will unlock regardless of what\'s on the lock screen\n\n
         • Allow Exceptions: Won\'t unlock if there are exceptions on the lock screen\n\n
         • Exceptions: Any kind of notification element\n\n
         • Music: If any media controller is active (such as Spotify or Google Play Music), auto-unlock won\'t activate\n\n
         • Dismissables: If there are notifications that can be dismissed, auto-unlock won\'t activate\n\n
         • Allow Non-Dismissables: Same as above, but if for non-dismissable notifications\n\n
+        • Reveal Sensitive Notifications: Will reveal the content of a sensitive notification upon unlock.
+          Enable hiding notifications in your phone\'s settings\n\n
         • Vibration: Will vibrate once the device is auto-unlocked\n\n
         • Duration: How long the vibration lasts in milliseconds\n\n
         • Delay: Will auto-unlock your device a specified number of seconds after face scan is completed

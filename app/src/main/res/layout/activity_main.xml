@@ -63,37 +63,63 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/lblDelay"
+                android:id="@+id/lblNameVersion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/spinnerDelay"
-                android:layout_below="@+id/lblVibDuration"
-                android:layout_marginTop="15dp"
-                android:text="Delay" />
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:foregroundGravity="right"
+                android:gravity="right"
+                android:text="Version: 1.0" />
+
+            <Switch
+                android:id="@+id/switchEnabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/lblNameVersion"
+                android:layout_marginStart="20dp"
+                android:checked="true"
+                android:text="Enabled "
+                tools:checked="true" />
+
+            <Switch
+                android:id="@+id/switchFast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/switchEnabled"
+                android:layout_alignStart="@+id/switchEnabled"
+                android:layout_below="@+id/switchEnabled"
+                android:layout_marginTop="3dp"
+                android:checked="true"
+                android:text="Fast"
+                tools:checked="true" />
 
             <TextView
-                android:id="@+id/lblPrefs"
+                android:id="@+id/lblAggression"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/boxNonDismiss"
-                android:layout_below="@+id/switchSensi"
+                android:layout_alignStart="@+id/switchFast"
+                android:layout_below="@+id/switchFast"
                 android:layout_marginTop="15dp"
-                android:text="Preferences" />
+                android:text="Aggression" />
 
             <RadioGroup
-                android:id="@+id/radioGroup"
+                android:id="@+id/radioGrpAgro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/lblHostility"
-                android:layout_below="@+id/lblHostility"
-                android:layout_marginTop="3dp">
+                android:layout_alignStart="@+id/lblAggression"
+                android:layout_below="@+id/lblAggression">
 
                 <RadioButton
                     android:id="@+id/radioForce"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/radioGroup"
-                    android:layout_alignTop="@+id/radioGroup"
+                    android:layout_alignStart="@+id/radioGrpAgro"
+                    android:layout_alignTop="@+id/radioGrpAgro"
                     android:tag="FORCE"
                     android:text="Force Unlock" />
 
@@ -107,6 +133,25 @@
 
             </RadioGroup>
 
+            <TextView
+                android:id="@+id/lblNotifs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/radioGrpAgro"
+                android:layout_below="@+id/radioGrpAgro"
+                android:layout_marginTop="15dp"
+                android:text="Exceptions" />
+
+            <CheckBox
+                android:id="@+id/boxMusic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/lblNotifs"
+                android:layout_below="@+id/lblNotifs"
+                android:layout_marginTop="3dp"
+                android:tag="MUSIC"
+                android:text="Allow Music" />
+
             <CheckBox
                 android:id="@+id/boxDismiss"
                 android:layout_width="wrap_content"
@@ -116,6 +161,35 @@
                 android:checked="false"
                 android:tag="DISMISSABLE"
                 android:text="Allow Dismissables" />
+
+            <CheckBox
+                android:id="@+id/boxNonDismiss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/boxDismiss"
+                android:layout_below="@+id/boxDismiss"
+                android:tag="DISMISSABLE"
+                android:text="Allow Non-Dismissables" />
+
+            <Switch
+                android:id="@+id/switchSensi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/boxNonDismiss"
+                android:layout_below="@+id/boxNonDismiss"
+                android:layout_marginLeft="7dp"
+                android:layout_marginTop="5dp"
+                android:checked="false"
+                android:text="Reveal Sensitive Notifications " />
+
+            <TextView
+                android:id="@+id/lblPrefs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/boxNonDismiss"
+                android:layout_below="@+id/switchSensi"
+                android:layout_marginTop="15dp"
+                android:text="Preferences" />
 
             <CheckBox
                 android:id="@+id/boxVibrate"
@@ -137,23 +211,6 @@
                 android:layout_marginTop="5dp"
                 android:text="Duration:" />
 
-            <Button
-                android:id="@+id/btnTheme"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/spinnerDelay"
-                android:layout_below="@+id/btnForum"
-                android:text="Theme" />
-
-            <TextView
-                android:id="@+id/lblHostility"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/switchEnabled"
-                android:layout_below="@+id/switchEnabled"
-                android:layout_marginTop="20dp"
-                android:text="Hostility" />
-
             <SeekBar
                 android:id="@+id/skVibDuration"
                 android:layout_width="match_parent"
@@ -167,66 +224,13 @@
                 android:progress="120" />
 
             <TextView
-                android:id="@+id/lblNotifs"
+                android:id="@+id/lblDelay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/radioGroup"
-                android:layout_below="@+id/radioGroup"
+                android:layout_alignStart="@+id/spinnerDelay"
+                android:layout_below="@+id/lblVibDuration"
                 android:layout_marginTop="15dp"
-                android:text="Exceptions" />
-
-            <Switch
-                android:id="@+id/switchEnabled"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/appBarLayout"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
-                android:checked="true"
-                android:text="Enabled "
-                tools:checked="true" />
-
-            <TextView
-                android:id="@+id/lblNameVersion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="false"
-                android:layout_alignParentEnd="false"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
-                android:foregroundGravity="right"
-                android:gravity="right"
-                android:text="Version: 1.0" />
-
-            <Button
-                android:id="@+id/btnForum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/btnReset"
-                android:layout_alignStart="@+id/btnTheme"
-                android:layout_below="@+id/spinnerDelay"
-                android:layout_marginTop="30dp"
-                android:text="XDA Thread" />
-
-            <CheckBox
-                android:id="@+id/boxNonDismiss"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/boxDismiss"
-                android:layout_below="@+id/boxDismiss"
-                android:tag="DISMISSABLE"
-                android:text="Allow Non-Dismissables" />
-
-            <CheckBox
-                android:id="@+id/boxMusic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/lblNotifs"
-                android:layout_below="@+id/lblNotifs"
-                android:layout_marginTop="3dp"
-                android:tag="MUSIC"
-                android:text="Allow Music" />
+                android:text="Delay" />
 
             <Spinner
                 android:id="@+id/spinnerDelay"
@@ -237,6 +241,24 @@
                 android:layout_below="@+id/lblDelay"
                 android:layout_marginTop="3dp"
                 android:entries="@array/delay_array" />
+
+            <Button
+                android:id="@+id/btnForum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/btnReset"
+                android:layout_alignStart="@+id/btnTheme"
+                android:layout_below="@+id/spinnerDelay"
+                android:layout_marginTop="25dp"
+                android:text="XDA Thread" />
+
+            <Button
+                android:id="@+id/btnTheme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/spinnerDelay"
+                android:layout_below="@+id/btnForum"
+                android:text="Theme" />
 
             <Button
                 android:id="@+id/btnInfo"
@@ -256,15 +278,6 @@
                 android:layout_alignBottom="@+id/btnInfo"
                 android:layout_toEndOf="@+id/btnInfo"
                 android:text="Reset" />
-
-            <Switch
-                android:id="@+id/switchSensi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/boxNonDismiss"
-                android:layout_below="@+id/boxNonDismiss"
-                android:layout_marginTop="6dp"
-                android:text="Reveal Sensitive Notifications " />
 
         </RelativeLayout>
     </ScrollView>
