@@ -1,285 +1,234 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutDrawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.samstenner.instantunlock.UnlockInterface">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabTwitter"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_weight="1"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            app:subtitle="by Sam Stenner"
-            app:title="Instant Face Unlock" />
-    </android.support.design.widget.AppBarLayout>
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="15dp"
+            android:clickable="true"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/twitter" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabDonate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="15dp"
-        android:layout_marginEnd="15dp"
-        android:clickable="true"
-        app:backgroundTint="@color/colorTeal"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/donate" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabTwitter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="80dp"
-        android:layout_marginEnd="15dp"
-        android:clickable="true"
-        app:backgroundTint="@color/colorTeal"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/twitter" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/appBarLayout">
-
-        <RelativeLayout
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/lblNameVersion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="false"
-                android:layout_alignParentEnd="false"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
-                android:foregroundGravity="right"
-                android:gravity="right"
-                android:text="Version: 1.0" />
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <Switch
-                android:id="@+id/switchEnabled"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/lblNameVersion"
-                android:layout_marginStart="20dp"
-                android:checked="true"
-                android:text="Enabled "
-                tools:checked="true" />
-
-            <Switch
-                android:id="@+id/switchFast"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/switchEnabled"
-                android:layout_alignStart="@+id/switchEnabled"
-                android:layout_below="@+id/switchEnabled"
-                android:layout_marginTop="3dp"
-                android:checked="true"
-                android:text="Fast"
-                tools:checked="true" />
-
-            <TextView
-                android:id="@+id/lblAggression"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/switchFast"
-                android:layout_below="@+id/switchFast"
-                android:layout_marginTop="15dp"
-                android:text="Aggression" />
-
-            <RadioGroup
-                android:id="@+id/radioGrpAgro"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/lblAggression"
-                android:layout_below="@+id/lblAggression">
-
-                <RadioButton
-                    android:id="@+id/radioForce"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/radioGrpAgro"
-                    android:layout_alignTop="@+id/radioGrpAgro"
-                    android:tag="FORCE"
-                    android:text="Force Unlock" />
+                    android:orientation="vertical">
 
-                <RadioButton
-                    android:id="@+id/radioNotif"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:tag="NOTIF"
-                    android:text="Allow Exceptions" />
+                    <Switch
+                        android:id="@+id/switchEnabled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:checked="true"
+                        android:text="Unlock"
+                        tools:checked="true" />
 
-            </RadioGroup>
+                    <Switch
+                        android:id="@+id/switchFast"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignEnd="@+id/switchEnabled"
+                        android:layout_alignStart="@+id/switchEnabled"
+                        android:layout_below="@+id/switchEnabled"
+                        android:layout_marginTop="5dp"
+                        android:checked="true"
+                        android:text="Fast"
+                        tools:checked="true" />
 
-            <TextView
-                android:id="@+id/lblNotifs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/radioGrpAgro"
-                android:layout_below="@+id/radioGrpAgro"
-                android:layout_marginTop="15dp"
-                android:text="Exceptions" />
+                    <TextView
+                        android:id="@+id/lblAggression"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/switchFast"
+                        android:layout_below="@+id/switchFast"
+                        android:layout_marginTop="20dp"
+                        android:text="Aggression" />
 
-            <CheckBox
-                android:id="@+id/boxMusic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/lblNotifs"
-                android:layout_below="@+id/lblNotifs"
-                android:layout_marginTop="3dp"
-                android:tag="MUSIC"
-                android:text="Allow Music" />
+                    <RadioGroup
+                        android:id="@+id/radioGrpAgro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/lblAggression"
+                        android:layout_below="@+id/lblAggression"
+                        android:layout_marginTop="3dp">
 
-            <CheckBox
-                android:id="@+id/boxDismiss"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/boxMusic"
-                android:layout_below="@+id/boxMusic"
-                android:checked="false"
-                android:tag="DISMISSABLE"
-                android:text="Allow Dismissables" />
+                        <RadioButton
+                            android:id="@+id/radioForce"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignStart="@+id/radioGrpAgro"
+                            android:layout_alignTop="@+id/radioGrpAgro"
+                            android:tag="FORCE"
+                            android:text="Force Unlock" />
 
-            <CheckBox
-                android:id="@+id/boxNonDismiss"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/boxDismiss"
-                android:layout_below="@+id/boxDismiss"
-                android:tag="DISMISSABLE"
-                android:text="Allow Non-Dismissables" />
+                        <RadioButton
+                            android:id="@+id/radioNotif"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:tag="NOTIF"
+                            android:text="Allow Exceptions" />
 
-            <Switch
-                android:id="@+id/switchSensi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/boxNonDismiss"
-                android:layout_below="@+id/boxNonDismiss"
-                android:layout_marginLeft="7dp"
-                android:layout_marginTop="5dp"
-                android:checked="false"
-                android:text="Reveal Sensitive Notifications " />
+                    </RadioGroup>
 
-            <TextView
-                android:id="@+id/lblPrefs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/boxNonDismiss"
-                android:layout_below="@+id/switchSensi"
-                android:layout_marginTop="15dp"
-                android:text="Preferences" />
+                    <TextView
+                        android:id="@+id/lblNotifs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/radioGrpAgro"
+                        android:layout_below="@+id/radioGrpAgro"
+                        android:layout_marginTop="20dp"
+                        android:text="Exceptions" />
 
-            <CheckBox
-                android:id="@+id/boxVibrate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/lblPrefs"
-                android:layout_below="@+id/lblPrefs"
-                android:layout_marginTop="5dp"
-                android:tag="DISMISSABLE"
-                android:text="Vibrate Upon Unlock" />
+                    <CheckBox
+                        android:id="@+id/boxMusic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/lblNotifs"
+                        android:layout_below="@+id/lblNotifs"
+                        android:layout_marginTop="3dp"
+                        android:tag="MUSIC"
+                        android:text="Allow Music/Media Notifications" />
 
-            <TextView
-                android:id="@+id/lblVibDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/boxVibrate"
-                android:layout_below="@+id/boxVibrate"
-                android:layout_marginLeft="35dp"
-                android:layout_marginTop="5dp"
-                android:text="Duration:" />
+                    <CheckBox
+                        android:id="@+id/boxDismiss"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/boxMusic"
+                        android:layout_below="@+id/boxMusic"
+                        android:checked="false"
+                        android:tag="DISMISSABLE"
+                        android:text="Allow Dismissable Notifications" />
 
-            <SeekBar
-                android:id="@+id/skVibDuration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/btnForum"
-                android:layout_below="@+id/boxVibrate"
-                android:layout_marginLeft="1dp"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/lblVibDuration"
-                android:max="500"
-                android:progress="120" />
+                    <CheckBox
+                        android:id="@+id/boxNonDismiss"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/boxDismiss"
+                        android:layout_below="@+id/boxDismiss"
+                        android:tag="DISMISSABLE"
+                        android:text="Allow Non-Dismissable Notifications" />
 
-            <TextView
-                android:id="@+id/lblDelay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/spinnerDelay"
-                android:layout_below="@+id/lblVibDuration"
-                android:layout_marginTop="15dp"
-                android:text="Delay" />
+                    <Switch
+                        android:id="@+id/switchDelayNotifs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/boxNonDismiss"
+                        android:layout_below="@+id/boxNonDismiss"
+                        android:layout_marginTop="5dp"
+                        android:checked="false"
+                        android:text="Only Delay With Notifications    " />
 
-            <Spinner
-                android:id="@+id/spinnerDelay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/boxNonDismiss"
-                android:layout_alignStart="@+id/boxNonDismiss"
-                android:layout_below="@+id/lblDelay"
-                android:layout_marginTop="3dp"
-                android:entries="@array/delay_array" />
+                    <Switch
+                        android:id="@+id/switchSensitive"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignEnd="@+id/switchDelayNotifs"
+                        android:layout_alignStart="@+id/switchDelayNotifs"
+                        android:layout_below="@+id/switchDelayNotifs"
+                        android:layout_marginTop="3dp"
+                        android:checked="false"
+                        android:text="Reveal Sensitive Notifications  " />
 
-            <Button
-                android:id="@+id/btnForum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/btnReset"
-                android:layout_alignStart="@+id/btnTheme"
-                android:layout_below="@+id/spinnerDelay"
-                android:layout_marginTop="25dp"
-                android:text="XDA Thread" />
+                    <TextView
+                        android:id="@+id/lblPrefs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/lblNotifs"
+                        android:layout_below="@+id/switchSensitive"
+                        android:layout_marginTop="20dp"
+                        android:text="Preferences" />
 
-            <Button
-                android:id="@+id/btnTheme"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/spinnerDelay"
-                android:layout_below="@+id/btnForum"
-                android:text="Theme" />
+                    <CheckBox
+                        android:id="@+id/boxVibrate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/lblPrefs"
+                        android:layout_below="@+id/lblPrefs"
+                        android:layout_marginTop="3dp"
+                        android:tag="DISMISSABLE"
+                        android:text="Vibrate Upon Unlock" />
 
-            <Button
-                android:id="@+id/btnInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/btnTheme"
-                android:layout_alignBottom="@+id/btnTheme"
-                android:layout_alignEnd="@+id/spinnerDelay"
-                android:layout_toEndOf="@+id/btnTheme"
-                android:text="Help" />
+                    <TextView
+                        android:id="@+id/lblVibDuration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/boxVibrate"
+                        android:layout_below="@+id/boxVibrate"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="5dp"
+                        android:text="Duration:" />
 
-            <Button
-                android:id="@+id/btnReset"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/btnInfo"
-                android:layout_alignBottom="@+id/btnInfo"
-                android:layout_toEndOf="@+id/btnInfo"
-                android:text="Reset" />
+                    <SeekBar
+                        android:id="@+id/skVibDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignEnd="@+id/boxNonDismiss"
+                        android:layout_below="@+id/boxVibrate"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_toEndOf="@+id/lblVibDuration"
+                        android:max="500"
+                        android:progress="120" />
 
-        </RelativeLayout>
-    </ScrollView>
+                    <TextView
+                        android:id="@+id/lblDelay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/boxVibrate"
+                        android:layout_below="@+id/lblVibDuration"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="15dp"
+                        android:text="Delay" />
 
-</RelativeLayout>
+                    <Spinner
+                        android:id="@+id/spinnerDelay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/lblPrefs"
+                        android:layout_below="@+id/lblDelay"
+                        android:layout_marginStart="-2dp"
+                        android:layout_marginTop="3dp"
+                        android:entries="@array/delay_array" />
+
+                </RelativeLayout>
+            </ScrollView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/navigation_menu">
+    </android.support.design.widget.NavigationView>
+
+</android.support.v4.widget.DrawerLayout>

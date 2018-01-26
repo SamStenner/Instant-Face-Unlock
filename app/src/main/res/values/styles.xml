@@ -3,6 +3,25 @@
     <!-- Base application theme. -->
 
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.Dark" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">@color/colorTeal</item>
+        <item name="colorAccent">@color/colorTeal</item>
+    </style>
+
+    <style name="AppTheme.Light" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/colorTeal</item>
+        <item name="colorAccent">@color/colorTeal</item>
+    </style>
+
+    <style name="AppTheme.Dark.Pixel" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">@color/colorPixelBlue</item>
+        <item name="colorAccent">@color/colorPixelBlue</item>
+    </style>
+
+    <style name="AppTheme.Light.Pixel" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/colorPixelBlue</item>
+        <item name="colorAccent">@color/colorPixelBlue</item>
+    </style>
+
 
 </resources>

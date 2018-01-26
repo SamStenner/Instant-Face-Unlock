@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_help"
+        android:title="Help"
+        android:icon="@drawable/help">
+    </item>
+    <item android:id="@+id/nav_xda"
+        android:title="XDA Thread"
+        android:icon="@drawable/xda">
+    </item>
+    <item android:id="@+id/nav_theme"
+        android:title="Toggle Theme"
+        android:icon="@drawable/theme">
+    </item>
+    <item android:id="@+id/nav_reset"
+        android:title="Reset Preferences"
+        android:icon="@drawable/reset">
+    </item>
+    <item android:id="@+id/nav_device"
+        android:title="Device Info"
+        android:icon="@drawable/device">
+    </item>
+    <item android:id="@+id/nav_code"
+        android:title="Source Code"
+        android:icon="@drawable/code">
+    </item>
+    <item android:id="@+id/nav_website"
+        android:title="Visit My Website"
+        android:icon="@drawable/website">
+    </item>
+    <item android:id="@+id/nav_donate"
+        android:title="Buy Me A Coffee"
+        android:icon="@drawable/donate">
+    </item>
+    <item android:id="@+id/nav_twitter"
+        android:title="My Twitter"
+        android:icon="@drawable/twitter">
+    </item>
+    <item android:id="@+id/nav_hide"
+        android:title="Hide IFU Launcher"
+        android:icon="@drawable/eye">
+    </item>
+</menu>

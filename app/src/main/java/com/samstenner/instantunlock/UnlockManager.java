@@ -1,11 +1,17 @@
 package com.samstenner.instantunlock;
 
 import android.app.AndroidAppHelper;
+import android.app.ExpandableListActivity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.util.Log;
+import android.preference.ListPreference;
+import android.service.notification.StatusBarNotification;
+import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,126 +23,133 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
+import static de.robv.android.xposed.XposedHelpers.callMethod;
+import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class UnlockManager implements IXposedHookLoadPackage {
 
+    // Controllers for accessing methods
+    private Object contMediator;
+    private Object contStatusBar;
+    private Object contAmbientState;
+    private Object contNotifStack;
+    private Object contMonitor;
 
-        // Controllers for accessing methods
-        private Object contMediator;
-        private Object contStatusBar;
-        private Object contAmbientState;
-        private Object contNotifStack;
+    // Record of preferences
+    private boolean enabled;
+    private String unlockType;
+    private boolean fastSpeed;
+    private boolean allowMusic;
+    private boolean allowDynamic;
+    private boolean allowStatic;
+    private boolean revealSensitive;
+    private boolean onlyDelayNotifs;
+    private boolean vibration;
+    private int vibDuration;
 
-        // Record of preferences
-        private String unlockType;
-        private boolean fastSpeed;
-        private boolean allowMusic;
-        private boolean allowDynamic;
-        private boolean allowStatic;
-        private boolean revealSensitive;
-        private boolean vibration;
-        private int vibDuration;
-        private int unlockDelay;
+    // References to all the classes that are hooked
+    private String pakSystemUI = "com.android.systemui";
+    private String pakKeyguard = "com.android.keyguard";
+    private String clsKGUpdate = pakKeyguard + ".KeyguardUpdateMonitor";
+    private String clsKGMediator = pakSystemUI + ".keyguard.KeyguardViewMediator";
+    private String clsKGMonitor = pakSystemUI + ".statusbar.policy.KeyguardMonitor";
+    private String clsStatusBar = pakSystemUI + ".statusbar.phone.PhoneStatusBar";
+    private String clsAmbientState = pakSystemUI + ".statusbar.stack.AmbientState";
+    private String clsNotifStack = pakSystemUI + ".statusbar.stack.NotificationStackScrollLayout";
+    private String clsNotifRow = pakSystemUI + ".statusbar.ExpandableNotificationRow";
+    private String clsMediaRow = pakSystemUI + ".statusbar.MediaExpandableNotificationRow";
 
-        // References to all the classes that are hooked
-        private String clsSystemUI = "com.android.systemui";
-        private String clsKGMediator = clsSystemUI + ".keyguard.KeyguardViewMediator";
-        private String clsKGMonitor = clsSystemUI + ".statusbar.policy.KeyguardMonitor";
-        private String clsStatusBar = clsSystemUI + ".statusbar.phone.PhoneStatusBar";
-        private String clsAmbientState = clsSystemUI + ".statusbar.stack.AmbientState";
-        private String clsNotifStack = clsSystemUI + ".statusbar.stack.NotificationStackScrollLayout";
-        private String clsNotifRow = clsSystemUI + ".statusbar.ExpandableNotificationRow";
-        private String clsMediaRow = clsSystemUI + ".statusbar.MediaExpandableNotificationRow";
+    // Miscellaneous variables
+    private int unlockDelay;
+    private int buildVersion;
+    private boolean unlocked = false;
 
-    // To do list:
-    // Fix L/M crash
 
-    // Checks every loaded package
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
 
         // Only continue if loaded package in SystemUI
-        if (!lpparam.packageName.equals(clsSystemUI)) {
+        if (!lpparam.packageName.equals(pakSystemUI) && !lpparam.packageName.equals(pakKeyguard)) {
             return;
         }
+        XposedBridge.log("Successfully Accessed Packages");
 
+        buildVersion = Build.VERSION.SDK_INT;
         // Correction for Oreo classes
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            clsKGMonitor = "com.android.systemui.statusbar.policy.KeyguardMonitorImpl";
-            clsStatusBar = "com.android.systemui.statusbar.phone.StatusBar";
+        if (buildVersion >= Build.VERSION_CODES.O) {
+            XposedBridge.log("Corrected for Oreo");
+            clsKGMonitor = pakSystemUI + ".statusbar.policy.KeyguardMonitorImpl";
+            clsStatusBar = pakSystemUI + ".statusbar.phone.StatusBar";
         }
 
         // When keyguard mediator loads, assign mediator object
         findAndHookMethod(clsKGMediator, lpparam.classLoader, "setupLocked", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
+                XposedBridge.log("Hooked Mediator");
                 contMediator = param.thisObject;
             }
         });
 
-        // When keyguard has changed status, attempt to unlock
-        findAndHookMethod(clsKGMonitor, lpparam.classLoader, "notifyKeyguardChanged", new XC_MethodHook() {
+        // Keyguard updates were given own function in Marshmallow
+        if (buildVersion >= Build.VERSION_CODES.M) {
+
+            // When keyguard has changed status, attempt to unlock
+            findAndHookMethod(clsKGMonitor, lpparam.classLoader, "notifyKeyguardChanged", new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
+                    contMonitor = param.thisObject;
+                    handleKGChange();
+                }
+            });
+
+        }
+        // If lower than Marshmallow, manually check for keyguard updates
+        else if (buildVersion < Build.VERSION_CODES.M) {
+            // When keyguard has changed status, attempt to unlock on Lollipop
+            findAndHookMethod(clsKGMonitor, lpparam.classLoader, "notifyKeyguardState", boolean.class, boolean.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
+                    contMonitor = param.thisObject;
+                    boolean showing = (boolean) param.args[0];
+                    boolean secure = (boolean) param.args[1];
+                    boolean mShowing = XposedHelpers.getBooleanField(contMonitor, "mShowing");
+                    boolean mSecure = XposedHelpers.getBooleanField(contMonitor, "mSecure");
+                    if (mShowing == showing && mSecure == secure) {
+                        handleKGChange();
+                    }
+                }
+            });
+        }
+
+
+        // When the
+        findAndHookMethod(clsKGUpdate, lpparam.classLoader, "getUserHasTrust", int.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
-                try {
-                    // Check if qualified to unlock and read preferences
-                    XSharedPreferences prefs = new XSharedPreferences("com.samstenner.instantunlock", "instant_unlock_settings");
-                    boolean enabled = prefs.getBoolean("enabled", true);
-                    boolean controlled = contMediator != null ? true : false;
-                    boolean visible = (boolean) XposedHelpers.callMethod(param.thisObject, "isShowing");
-                    boolean unlocked = XposedHelpers.getBooleanField(param.thisObject, "mCanSkipBouncer");
-                    // If able to be unlocked
-                    if (enabled && unlocked && controlled && visible) {
-                        // Retrieve preferences
-                        unlockType = prefs.getString("mode", "FORCE");
-                        fastSpeed = prefs.getBoolean("fast", true);
-                        allowMusic = prefs.getBoolean("music", false);
-                        allowDynamic = prefs.getBoolean("dynamic", false);
-                        allowStatic = prefs.getBoolean("static", false);
-                        revealSensitive = prefs.getBoolean("sensitive", false);
-                        vibration = prefs.getBoolean("vibrate", false);
-                        vibDuration = prefs.getInt("vib_duration", 120);
-                        int[] arrayDelays = new int[] {0, 1, 2, 3, 5, 10};
-                        unlockDelay = arrayDelays[prefs.getInt("delay", 0)];
-                        // Check the exceptions aren't active
-                        boolean canDismiss = canUnlock(unlockType);
-                        if (canDismiss) {
-                            // Alohomora
-                            unlock();
-                        }
-                    }
-                } catch (Throwable t){
-                    XposedBridge.log(t);
-                }
+                unlocked = (boolean) param.getResult();
+                XposedBridge.log("Unlockable: " + unlocked);
             }
         });
+
 
         // When status bar loads, assign status bar object
         findAndHookMethod(clsStatusBar, lpparam.classLoader,"start", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
                 if (contStatusBar == null) {
+                    XposedBridge.log("Status Bar Hooked");
                     contStatusBar = param.thisObject;
                 }
             }
         });
 
-        // When first animation has finished, cancel second animation
-        findAndHookMethod(clsKGMediator, lpparam.classLoader, "startKeyguardExitAnimation", long.class, long.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                // Set duration to 0ms
-                param.args[1] = 0;
-            }
-        });
-
-
-        // When status bar loads, assign status bar object
+        // When ambient state loads, assign ambient state object
         findAndHookMethod(clsAmbientState, lpparam.classLoader, "isHideSensitive", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 if (contAmbientState == null) {
+                    XposedBridge.log("Hooked Ambient State");
                     contAmbientState = param.thisObject;
                 }
             }
@@ -146,34 +159,84 @@ public class UnlockManager implements IXposedHookLoadPackage {
         findAndHookMethod(clsNotifStack, lpparam.classLoader, "initView", Context.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                XposedBridge.log("Hooked Notification Stack");
                 contNotifStack = param.thisObject;
             }
         });
 
+        // When first animation has finished, cancel second animation
+        findAndHookMethod(clsKGMediator, lpparam.classLoader, "startKeyguardExitAnimation", long.class, long.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                XposedBridge.log("Hooked Exiting Animation");
+                if (fastSpeed) {
+                    // Set duration and start to 0ms
+                    param.args[0] = 0;
+                    param.args[1] = 0;
+                }
+            }
+        });
+    }
+
+    //
+    private void handleKGChange() {
+        XposedBridge.log("Hooked Keyguard Changed");
+        try {
+            readPrefs();
+            boolean controlled = contMediator != null ? true : false;
+            boolean visible = (boolean) XposedHelpers.callMethod(contMonitor, "isShowing");
+            //boolean unlocked = XposedHelpers.getBooleanField(contMonitor, "mCanSkipBouncer");
+            XposedBridge.log(
+                    "Enabled: " + enabled + "\n" +
+                            "Controlled: " + controlled + "\n" +
+                            "Visible: " + visible + "\n" +
+                            "Unlocked: " + unlocked);
+            // If able to be unlocked
+
+            if (enabled && unlocked && controlled && visible) {
+                // Check the exceptions aren't active
+                boolean canDismiss = canUnlock(unlockType);
+                if (canDismiss) {
+                    // Alohomora
+                    unlock();
+                } else {
+                    XposedBridge.log("Preferences Blocked Unlock");
+                }
+            } else if (unlocked && visible && unlocked && revealSensitive && !enabled) {
+                canUnlock("REVEAL");
+            }
+            else {
+                XposedBridge.log("Not Eligible For Unlock");
+            }
+        } catch (Throwable t) {
+            XposedBridge.log(t);
+        }
     }
 
     // Determines whether exceptions prevent unlock
     private boolean canUnlock(String unlockType){
+        XposedBridge.log("Checking Unlock Eligibility");
         // No exceptions, allow
         if (unlockType.equals("FORCE")) {
             return true;
         }
         // If media currently playing and allowed, disallow dismissal
-        if (XposedHelpers.getObjectField(contStatusBar, "mMediaMetadata") != null && allowMusic) {
+        if (contStatusBar != null && XposedHelpers.getObjectField(contStatusBar, "mMediaMetadata") != null && allowMusic) {
             return false;
         }
         // Get all notifications as group
         ViewGroup group = (ViewGroup) XposedHelpers.getObjectField(contStatusBar, "mStackScroller");
         // Loop each status bar element
+        int notifCounter = 0;
         for (int i = 0; i < group.getChildCount(); i++) {
             View child = group.getChildAt(i);
             if (child.getVisibility() == View.VISIBLE) {
                 // If element is notification
+                notifCounter++;
                 if (child.getClass().getName().equals(clsNotifRow)) {
                     // If revealing, disallow dismissal
                     if (revealSensitive) {
                         showSensitive(group);
-                        return false;
                     }
                     boolean isClearable = (boolean) XposedHelpers.callMethod(child, "isClearable");
                     // Disallow keyguard dismisal if allowing dismissable notifications
@@ -190,46 +253,51 @@ public class UnlockManager implements IXposedHookLoadPackage {
                 }
             }
         }
+        if (notifCounter == 0 && onlyDelayNotifs) {
+            unlockDelay = 0;
+        }
         // If status bar 'forever holds its peace', then allow dismissal
         return true;
     }
 
     // Unlocks the device
     private void unlock() {
+        XposedBridge.log("Attempting Unlock");
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                int buildVersion = Build.VERSION.SDK_INT;
                 // If fast enabled, unlock without animation
                 if (fastSpeed) {
-                    // Changes in Oreo require version selection
                     if (buildVersion >= Build.VERSION_CODES.O) {
                         // Informs mediator that user dismissed using swipe when they actually haven't
                         XposedHelpers.callMethod(contMediator, "handleKeyguardDone");
-                    } else {
+                    } else if (buildVersion >= Build.VERSION_CODES.N ) {
                         // Same as before, but strong authentication is specified as true
                         XposedHelpers.callMethod(contMediator, "handleKeyguardDone", true);
+                    } else {
+                        XposedHelpers.callMethod(contMediator, "handleKeyguardDone", true, false);
                     }
                 }
                 // Otherwise unlock with animation
                 else {
-                    // For some reason, SDK 24 doesn't need an argument
-                    if (buildVersion == Build.VERSION_CODES.N) {
-                        XposedHelpers.callMethod(contMediator, "dismiss");
-                    } else if (buildVersion >= Build.VERSION_CODES.O) {
+                    if (buildVersion >= Build.VERSION_CODES.O) {
                         XposedHelpers.callMethod(contMediator, "dismiss", (Object)null);
-                    } else {
+                    } else if (buildVersion == Build.VERSION_CODES.N_MR1) {
                         XposedHelpers.callMethod(contMediator, "dismiss", false);
+                    } else  {
+                        XposedHelpers.callMethod(contMediator, "dismiss");
                     }
                 }
                 // Vibrates if intended
                 if (vibration) {
+                    XposedBridge.log("Vibrating");
                     Vibrator vib = (Vibrator) AndroidAppHelper.currentApplication().getSystemService(Context.VIBRATOR_SERVICE);
                     if (vib.hasVibrator()) {
                         vib.vibrate(vibDuration);
                     }
                 }
+                XposedBridge.log("Unlocked Successfully");
             }
             // If user wanted a delay, perform here
         }, unlockDelay * 1000);
@@ -237,18 +305,44 @@ public class UnlockManager implements IXposedHookLoadPackage {
 
     // Reveals sensitive notification data upon unlock
     private void showSensitive(ViewGroup group){
+        XposedBridge.log("Showing Sensitive Notifications");
         // Make sensitivity false
         XposedHelpers.callMethod(contAmbientState, "setHideSensitive", false);
         // Loop each notification
-        for (int i = 0; i < group.getChildCount(); i++){
+        if (buildVersion < Build.VERSION_CODES.M) {
+            XposedHelpers.callMethod(contNotifStack, "setHideSensitive", false, true);
+        }
+        for (int i = 0; i < group.getChildCount(); i++) {
             View child = group.getChildAt(i);
-            // Update the sensitivity for the notification
-            XposedHelpers.callMethod(contNotifStack, "onViewAddedInternal", child);
-            // Refresh the notification status to UI
+            if (buildVersion < Build.VERSION_CODES.M) {
+                XposedHelpers.callMethod(contNotifStack, "generateAddAnimation", child, false);
+                XposedHelpers.callMethod(contNotifStack, "updateAnimationState", child);
+            } else {
+                // Update the sensitivity for the notification
+                XposedHelpers.callMethod(contNotifStack, "onViewAddedInternal", child);
+            }
+            // Refresh the notification status on UI
             XposedHelpers.callMethod(contNotifStack, "requestChildrenUpdate");
         }
     }
 
+    private void readPrefs(){
+        XposedBridge.log("Retrieving Preferences");
+        // Retrieve preferences
+        XSharedPreferences prefs = new XSharedPreferences("com.samstenner.instantunlock", "instant_unlock_settings");
+        enabled = prefs.getBoolean("enabled", true);
+        revealSensitive = prefs.getBoolean("sensitive", false);
+        unlockType = prefs.getString("mode", "FORCE");
+        fastSpeed = prefs.getBoolean("fast", true);
+        allowMusic = prefs.getBoolean("music", false);
+        allowDynamic = prefs.getBoolean("dynamic", false);
+        allowStatic = prefs.getBoolean("static", false);
+        onlyDelayNotifs = prefs.getBoolean("delay_notifs", false);
+        vibration = prefs.getBoolean("vibrate", false);
+        vibDuration = prefs.getInt("vib_duration", 120);
+        int[] arrayDelays = new int[]{0, 1, 2, 3, 5, 10};
+        unlockDelay = arrayDelays[prefs.getInt("delay", 0)];
+    }
 
 }
 

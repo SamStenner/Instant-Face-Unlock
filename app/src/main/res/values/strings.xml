@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Instant Face Unlock</string>
+    <string name="app_name">InstantFaceUnlock</string>
+    <string name="app_developer">Sam Stenner</string>
     <string name="title_activity_main">IFU</string>
 
     <string-array name="delay_array">
@@ -15,21 +16,23 @@
     <string name="twitter">https://twitter.com/SamOfStenner</string>
     <string name="donate">https://paypal.me/samstenner</string>
     <string name="xda_thread">https://forum.xda-developers.com/xposed/modules/xposed-instant-unlock-t3688329#post74144137</string>
+    <string name="github">https://github.com/SamStenner/instant-face-unlock/tree/master</string>
+    <string name="website">http://www.samstenner.com</string>
 
     <string name="info">
-        • Enabled: Whether IFU is enabled or not\n\n
-        • Fast: When enabled, the unlocking animation is skipped, making the unlock faster\n\n
-        • Force Unlock: Will unlock regardless of what\'s on the lock screen\n\n
-        • Allow Exceptions: Won\'t unlock if there are exceptions on the lock screen\n\n
-        • Exceptions: Any kind of notification element\n\n
-        • Music: If any media controller is active (such as Spotify or Google Play Music), auto-unlock won\'t activate\n\n
-        • Dismissables: If there are notifications that can be dismissed, auto-unlock won\'t activate\n\n
-        • Allow Non-Dismissables: Same as above, but if for non-dismissable notifications\n\n
-        • Reveal Sensitive Notifications: Will reveal the content of a sensitive notification upon unlock.
-          Enable hiding notifications in your phone\'s settings\n\n
-        • Vibration: Will vibrate once the device is auto-unlocked\n\n
-        • Duration: How long the vibration lasts in milliseconds\n\n
-        • Delay: Will auto-unlock your device a specified number of seconds after face scan is completed
+        Enabled: Whether IFU is enabled or not\n\n
+        Fast: When enabled, the unlocking animation is skipped, making the unlock faster\n\n
+        Force Unlock: Will unlock regardless of what\'s on the lock screen\n\n
+        Allow Exceptions: Won\'t unlock if there are exceptions on the lock screen\n\n
+        Exceptions: Any kind of notification element\n\n
+        Music: If any media controller is active (such as Spotify or Google Play Music), auto-unlock won\'t activate\n\n
+        Dismissables: If there are notifications that can be dismissed, auto-unlock won\'t activate\n\n
+        Allow Non-Dismissables: Same as above, but if for non-dismissable notifications\n\n
+        Only Delay With Notifications: The unlock delay will only apply if there is a notification\n\n
+        Reveal Sensitive Notifications: Will reveal the content of a sensitive notification upon unlock. Enable hiding notifications in your phone\'s settings\n\n
+        Vibration: Will vibrate once the device is auto-unlocked\n\n
+        Duration: How long the vibration lasts in milliseconds\n\n
+        Delay: Will auto-unlock your device a specified number of seconds after face scan is completed
     </string>
 
     <string name="settings_reset">Preferences reset</string>
@@ -40,5 +43,8 @@
         move it from your SD card to your internal storage BEFORE doing a reboot. I hope to fix this in a future update, apologies
         for the inconvenience.
     </string>
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 
 </resources>
