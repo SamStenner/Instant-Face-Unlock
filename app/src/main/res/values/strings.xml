@@ -35,6 +35,11 @@
         Delay: Will auto-unlock your device a specified number of seconds after face scan is completed
     </string>
 
+    <string name="pie_prefs">Unfortunately, custom preferences for IFU is not yet supported on Android Pie or above.
+        It may be possible, but doesn\'t seem to be working as it did in Oreo. If you\'d like to contribute to the project
+        to enable this feature then you\'re welcome to check out the IFU Github project.
+    </string>
+
     <string name="settings_reset">Preferences reset</string>
 
     <string name="sd_card_error">

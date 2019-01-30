@@ -35,6 +35,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -43,6 +44,8 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import java.io.File;
+
+import de.robv.android.xposed.XposedBridge;
 
 public class UnlockInterface extends AppCompatActivity {
 
@@ -83,7 +86,6 @@ public class UnlockInterface extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         updateInterface();
-
     }
 
     private void updateInterface() {
@@ -222,6 +224,12 @@ public class UnlockInterface extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Refreshed preferences from file!", Toast.LENGTH_SHORT).show();
             }
         });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            swipeRefresh.setVisibility(View.GONE);
+            String message = getString(R.string.pie_prefs);
+            createDialog("CUSTOMIZATION NOT SUPPORTED", "OK", message);
+        }
 
 
         drawerLayout = (DrawerLayout) findViewById(R.id.layoutDrawer);
@@ -436,7 +444,11 @@ public class UnlockInterface extends AppCompatActivity {
             String IFUVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
             String androidVersion = "";
             String buildVersion = Build.VERSION.RELEASE;
-            if (build >= 26)
+            if (build >= 29)
+                androidVersion += buildVersion + " - Q";
+            else if (build >= 28)
+                androidVersion += buildVersion + " - Pie";
+            else if (build >= 26)
                 androidVersion += buildVersion + " - Oreo";
             else if (build >= 24)
                 androidVersion += buildVersion + " - Nougat";

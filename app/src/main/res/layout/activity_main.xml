@@ -33,6 +33,7 @@
                 android:layout_height="match_parent">
 
                 <RelativeLayout
+                    android:id="@+id/layout_relative"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -52,9 +53,9 @@
                         android:id="@+id/switchFast"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignEnd="@+id/switchEnabled"
-                        android:layout_alignStart="@+id/switchEnabled"
                         android:layout_below="@+id/switchEnabled"
+                        android:layout_alignStart="@+id/switchEnabled"
+                        android:layout_alignEnd="@+id/switchEnabled"
                         android:layout_marginTop="5dp"
                         android:checked="true"
                         android:text="Fast"
@@ -64,8 +65,8 @@
                         android:id="@+id/lblAggression"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/switchFast"
                         android:layout_below="@+id/switchFast"
+                        android:layout_alignStart="@+id/switchFast"
                         android:layout_marginTop="20dp"
                         android:text="Aggression" />
 
@@ -73,8 +74,8 @@
                         android:id="@+id/radioGrpAgro"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/lblAggression"
                         android:layout_below="@+id/lblAggression"
+                        android:layout_alignStart="@+id/lblAggression"
                         android:layout_marginTop="3dp">
 
                         <RadioButton
@@ -100,8 +101,8 @@
                         android:id="@+id/lblNotifs"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/radioGrpAgro"
                         android:layout_below="@+id/radioGrpAgro"
+                        android:layout_alignStart="@+id/radioGrpAgro"
                         android:layout_marginTop="20dp"
                         android:text="Exceptions" />
 
@@ -109,8 +110,8 @@
                         android:id="@+id/boxMusic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/lblNotifs"
                         android:layout_below="@+id/lblNotifs"
+                        android:layout_alignStart="@+id/lblNotifs"
                         android:layout_marginTop="3dp"
                         android:tag="MUSIC"
                         android:text="Allow Music/Media Notifications" />
@@ -119,8 +120,8 @@
                         android:id="@+id/boxDismiss"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/boxMusic"
                         android:layout_below="@+id/boxMusic"
+                        android:layout_alignStart="@+id/boxMusic"
                         android:checked="false"
                         android:tag="DISMISSABLE"
                         android:text="Allow Dismissable Notifications" />
@@ -129,8 +130,8 @@
                         android:id="@+id/boxNonDismiss"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/boxDismiss"
                         android:layout_below="@+id/boxDismiss"
+                        android:layout_alignStart="@+id/boxDismiss"
                         android:tag="DISMISSABLE"
                         android:text="Allow Non-Dismissable Notifications" />
 
@@ -138,8 +139,8 @@
                         android:id="@+id/switchDelayNotifs"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/boxNonDismiss"
                         android:layout_below="@+id/boxNonDismiss"
+                        android:layout_alignStart="@+id/boxNonDismiss"
                         android:layout_marginTop="5dp"
                         android:checked="false"
                         android:text="Only Delay With Notifications    " />
@@ -148,9 +149,9 @@
                         android:id="@+id/switchSensitive"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignEnd="@+id/switchDelayNotifs"
-                        android:layout_alignStart="@+id/switchDelayNotifs"
                         android:layout_below="@+id/switchDelayNotifs"
+                        android:layout_alignStart="@+id/switchDelayNotifs"
+                        android:layout_alignEnd="@+id/switchDelayNotifs"
                         android:layout_marginTop="3dp"
                         android:checked="false"
                         android:text="Reveal Sensitive Notifications  " />
@@ -159,8 +160,8 @@
                         android:id="@+id/lblPrefs"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/lblNotifs"
                         android:layout_below="@+id/switchSensitive"
+                        android:layout_alignStart="@+id/lblNotifs"
                         android:layout_marginTop="20dp"
                         android:text="Preferences" />
 
@@ -168,8 +169,8 @@
                         android:id="@+id/boxVibrate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/lblPrefs"
                         android:layout_below="@+id/lblPrefs"
+                        android:layout_alignStart="@+id/lblPrefs"
                         android:layout_marginTop="3dp"
                         android:tag="DISMISSABLE"
                         android:text="Vibrate Upon Unlock" />
@@ -178,8 +179,8 @@
                         android:id="@+id/lblVibDuration"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/boxVibrate"
                         android:layout_below="@+id/boxVibrate"
+                        android:layout_alignStart="@+id/boxVibrate"
                         android:layout_marginStart="25dp"
                         android:layout_marginTop="5dp"
                         android:text="Duration:" />
@@ -188,8 +189,8 @@
                         android:id="@+id/skVibDuration"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignEnd="@+id/boxNonDismiss"
                         android:layout_below="@+id/boxVibrate"
+                        android:layout_alignEnd="@+id/boxNonDismiss"
                         android:layout_marginLeft="1dp"
                         android:layout_marginTop="5dp"
                         android:layout_toEndOf="@+id/lblVibDuration"
@@ -200,8 +201,8 @@
                         android:id="@+id/lblDelay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/boxVibrate"
                         android:layout_below="@+id/lblVibDuration"
+                        android:layout_alignStart="@+id/boxVibrate"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="15dp"
                         android:text="Delay" />
@@ -210,8 +211,8 @@
                         android:id="@+id/spinnerDelay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/lblPrefs"
                         android:layout_below="@+id/lblDelay"
+                        android:layout_alignStart="@+id/lblPrefs"
                         android:layout_marginStart="-2dp"
                         android:layout_marginTop="3dp"
                         android:entries="@array/delay_array" />
