@@ -47,6 +47,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
     private boolean onlyDelayNotifs;
     private boolean vibration;
     private int vibDuration;
+    private boolean unlocking;
 
     // References to all the classes that are hooked
     private String pakSystemUI = "com.android.systemui";
@@ -66,6 +67,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
     private boolean unlocked = false;
 
 
+    @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
 
         // Only continue if loaded package in SystemUI
@@ -75,6 +77,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
         XposedBridge.log("Successfully Accessed Packages");
 
         buildVersion = Build.VERSION.SDK_INT;
+        XposedBridge.log(buildVersion + "");
         // Correction for Oreo classes
         if (buildVersion >= Build.VERSION_CODES.O) {
             XposedBridge.log("Corrected for Oreo");
@@ -93,12 +96,12 @@ public class UnlockManager implements IXposedHookLoadPackage {
 
         // Keyguard updates were given own function in Marshmallow
         if (buildVersion >= Build.VERSION_CODES.M) {
-
             // When keyguard has changed status, attempt to unlock
             findAndHookMethod(clsKGMonitor, lpparam.classLoader, "notifyKeyguardChanged", new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
                     contMonitor = param.thisObject;
+                    XposedBridge.log("Hooked Monitor");
                     handleKGChange();
                 }
             });
@@ -123,12 +126,25 @@ public class UnlockManager implements IXposedHookLoadPackage {
         }
 
 
-        // When the
+        // Check when trust has changed
         findAndHookMethod(clsKGUpdate, lpparam.classLoader, "getUserHasTrust", int.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
-                unlocked = (boolean) param.getResult();
                 XposedBridge.log("Unlockable: " + unlocked);
+
+                // This is a dirty hack that enables functionality on Android P. This isn't as
+                // good as doing it the usual way, but until a better method is figured out
+                // then it will have to do!
+                unlocked = (boolean) param.getResult();
+                if (buildVersion >= Build.VERSION_CODES.P) {
+                    if (unlocked && !unlocking) {
+                        unlocking = true;
+                        handleKGChange();
+                    }
+                    if (unlocking && !unlocked) {
+                        unlocking = false;
+                    }
+                }
             }
         });
 
@@ -138,7 +154,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
             @Override
             protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
                 if (contStatusBar == null) {
-                    XposedBridge.log("Status Bar Hooked");
+                    XposedBridge.log("Hooked Status Bar");
                     contStatusBar = param.thisObject;
                 }
             }
@@ -183,9 +199,8 @@ public class UnlockManager implements IXposedHookLoadPackage {
         XposedBridge.log("Hooked Keyguard Changed");
         try {
             readPrefs();
-            boolean controlled = contMediator != null ? true : false;
-            boolean visible = (boolean) XposedHelpers.callMethod(contMonitor, "isShowing");
-            //boolean unlocked = XposedHelpers.getBooleanField(contMonitor, "mCanSkipBouncer");
+            boolean controlled = contMediator != null;
+            boolean visible = contMonitor != null ? (boolean) XposedHelpers.callMethod(contMonitor, "isShowing") : true;
             XposedBridge.log(
                     "Enabled: " + enabled + "\n" +
                             "Controlled: " + controlled + "\n" +
@@ -264,6 +279,8 @@ public class UnlockManager implements IXposedHookLoadPackage {
     private void unlock() {
         XposedBridge.log("Attempting Unlock");
         final Handler handler = new Handler();
+        final String handle = "handleKeyguardDone";
+        final String dismiss = "dismiss";
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -271,22 +288,24 @@ public class UnlockManager implements IXposedHookLoadPackage {
                 if (fastSpeed) {
                     if (buildVersion >= Build.VERSION_CODES.O) {
                         // Informs mediator that user dismissed using swipe when they actually haven't
-                        XposedHelpers.callMethod(contMediator, "handleKeyguardDone");
+                        XposedHelpers.callMethod(contMediator, handle);
                     } else if (buildVersion >= Build.VERSION_CODES.N ) {
                         // Same as before, but strong authentication is specified as true
-                        XposedHelpers.callMethod(contMediator, "handleKeyguardDone", true);
+                        XposedHelpers.callMethod(contMediator, handle, true);
                     } else {
-                        XposedHelpers.callMethod(contMediator, "handleKeyguardDone", true, false);
+                        XposedHelpers.callMethod(contMediator, handle, true, false);
                     }
                 }
                 // Otherwise unlock with animation
                 else {
-                    if (buildVersion >= Build.VERSION_CODES.O) {
-                        XposedHelpers.callMethod(contMediator, "dismiss", (Object)null);
+                    if (buildVersion >= Build.VERSION_CODES.P){
+                        XposedHelpers.callMethod(contMediator, dismiss, (Object)null, null);
+                    } else if (buildVersion >= Build.VERSION_CODES.O) {
+                        XposedHelpers.callMethod(contMediator, dismiss, (Object)null);
                     } else if (buildVersion == Build.VERSION_CODES.N_MR1) {
-                        XposedHelpers.callMethod(contMediator, "dismiss", false);
+                        XposedHelpers.callMethod(contMediator, dismiss, false);
                     } else  {
-                        XposedHelpers.callMethod(contMediator, "dismiss");
+                        XposedHelpers.callMethod(contMediator, dismiss);
                     }
                 }
                 // Vibrates if intended
