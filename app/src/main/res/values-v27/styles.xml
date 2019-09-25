@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.Light" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <item name="colorPrimary">@color/colorTeal</item>
+        <item name="colorAccent">@color/colorTeal</item>
+        <item name="android:statusBarColor">@color/colorTeal</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>

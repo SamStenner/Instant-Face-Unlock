@@ -1,30 +1,20 @@
 package com.samstenner.instantunlock;
 
 import android.app.AndroidAppHelper;
-import android.app.ExpandableListActivity;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.preference.ListPreference;
-import android.service.notification.StatusBarNotification;
-import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
 import android.view.View;
 import android.view.ViewGroup;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
-import static de.robv.android.xposed.XposedHelpers.callMethod;
-import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 public class UnlockManager implements IXposedHookLoadPackage {
@@ -68,7 +58,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
 
 
     @Override
-    public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
+    public void handleLoadPackage(final LoadPackageParam lpparam) {
 
         // Only continue if loaded package in SystemUI
         if (!lpparam.packageName.equals(pakSystemUI) && !lpparam.packageName.equals(pakKeyguard)) {
@@ -77,7 +67,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
         XposedBridge.log("Successfully Accessed Packages");
 
         buildVersion = Build.VERSION.SDK_INT;
-        XposedBridge.log(buildVersion + "");
+        XposedBridge.log(String.valueOf(buildVersion));
         // Correction for Oreo classes
         if (buildVersion >= Build.VERSION_CODES.O) {
             XposedBridge.log("Corrected for Oreo");
@@ -118,9 +108,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
                     boolean secure = (boolean) param.args[1];
                     boolean mShowing = XposedHelpers.getBooleanField(contMonitor, "mShowing");
                     boolean mSecure = XposedHelpers.getBooleanField(contMonitor, "mSecure");
-                    if (mShowing == showing && mSecure == secure) {
-                        handleKGChange();
-                    }
+                    if (mShowing == showing && mSecure == secure) handleKGChange();
                 }
             });
         }
@@ -129,21 +117,19 @@ public class UnlockManager implements IXposedHookLoadPackage {
         // Check when trust has changed
         findAndHookMethod(clsKGUpdate, lpparam.classLoader, "getUserHasTrust", int.class, new XC_MethodHook() {
             @Override
-            protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
+            protected void afterHookedMethod(final MethodHookParam param) {
                 XposedBridge.log("Unlockable: " + unlocked);
 
-                // This is a dirty hack that enables functionality on Android P. This isn't as
+                // This is a dirty hack that (sort of) enables functionality on Android P. This isn't as
                 // good as doing it the usual way, but until a better method is figured out
                 // then it will have to do!
                 unlocked = (boolean) param.getResult();
-                if (buildVersion >= Build.VERSION_CODES.P) {
+                if (buildVersion > Build.VERSION_CODES.P) {
                     if (unlocked && !unlocking) {
                         unlocking = true;
                         handleKGChange();
                     }
-                    if (unlocking && !unlocked) {
-                        unlocking = false;
-                    }
+                    if (unlocking && !unlocked) unlocking = false;
                 }
             }
         });
@@ -152,7 +138,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
         // When status bar loads, assign status bar object
         findAndHookMethod(clsStatusBar, lpparam.classLoader,"start", new XC_MethodHook() {
             @Override
-            protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
+            protected void afterHookedMethod(final MethodHookParam param) {
                 if (contStatusBar == null) {
                     XposedBridge.log("Hooked Status Bar");
                     contStatusBar = param.thisObject;
@@ -163,7 +149,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
         // When ambient state loads, assign ambient state object
         findAndHookMethod(clsAmbientState, lpparam.classLoader, "isHideSensitive", new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            protected void beforeHookedMethod(MethodHookParam param) {
                 if (contAmbientState == null) {
                     XposedBridge.log("Hooked Ambient State");
                     contAmbientState = param.thisObject;
@@ -174,7 +160,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
         // When notification stack loads, assign stack object
         findAndHookMethod(clsNotifStack, lpparam.classLoader, "initView", Context.class, new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            protected void beforeHookedMethod(MethodHookParam param) {
                 XposedBridge.log("Hooked Notification Stack");
                 contNotifStack = param.thisObject;
             }
@@ -183,7 +169,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
         // When first animation has finished, cancel second animation
         findAndHookMethod(clsKGMediator, lpparam.classLoader, "startKeyguardExitAnimation", long.class, long.class, new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            protected void beforeHookedMethod(MethodHookParam param) {
                 XposedBridge.log("Hooked Exiting Animation");
                 if (fastSpeed) {
                     // Set duration and start to 0ms
@@ -200,7 +186,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
         try {
             readPrefs();
             boolean controlled = contMediator != null;
-            boolean visible = contMonitor != null ? (boolean) XposedHelpers.callMethod(contMonitor, "isShowing") : true;
+            boolean visible = contMonitor == null || (boolean) XposedHelpers.callMethod(contMonitor, "isShowing");
             XposedBridge.log(
                     "Enabled: " + enabled + "\n" +
                             "Controlled: " + controlled + "\n" +
@@ -218,7 +204,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
                     XposedBridge.log("Preferences Blocked Unlock");
                 }
             } else if (unlocked && visible && unlocked && revealSensitive && !enabled) {
-                canUnlock("REVEAL");
+                canUnlock(ValueHolder.REVEAL);
             }
             else {
                 XposedBridge.log("Not Eligible For Unlock");
@@ -232,13 +218,9 @@ public class UnlockManager implements IXposedHookLoadPackage {
     private boolean canUnlock(String unlockType){
         XposedBridge.log("Checking Unlock Eligibility");
         // No exceptions, allow
-        if (unlockType.equals("FORCE")) {
-            return true;
-        }
+        if (unlockType.equals(ValueHolder.FORCE)) return true;
         // If media currently playing and allowed, disallow dismissal
-        if (contStatusBar != null && XposedHelpers.getObjectField(contStatusBar, "mMediaMetadata") != null && allowMusic) {
-            return false;
-        }
+        if (contStatusBar != null && XposedHelpers.getObjectField(contStatusBar, "mMediaMetadata") != null && allowMusic) return false;
         // Get all notifications as group
         ViewGroup group = (ViewGroup) XposedHelpers.getObjectField(contStatusBar, "mStackScroller");
         // Loop each status bar element
@@ -250,28 +232,18 @@ public class UnlockManager implements IXposedHookLoadPackage {
                 notifCounter++;
                 if (child.getClass().getName().equals(clsNotifRow)) {
                     // If revealing, disallow dismissal
-                    if (revealSensitive) {
-                        showSensitive(group);
-                    }
+                    if (revealSensitive) showSensitive(group);
                     boolean isClearable = (boolean) XposedHelpers.callMethod(child, "isClearable");
                     // Disallow keyguard dismisal if allowing dismissable notifications
-                    if (isClearable && allowDynamic) {
-                        return false;
-                    }
+                    if (isClearable && allowDynamic) return false;
                     // Same but for non-dismissable notifications
-                    else if (!isClearable && allowStatic) {
-                        return false;
-                    }
+                    else if (!isClearable && allowStatic) return false;
                 // some custom ROMs use media row, check if using, disallow if intended
-                } else if (child.getClass().getName().equals(clsMediaRow) && allowMusic) {
-                    return false;
-                }
+                } else if (child.getClass().getName().equals(clsMediaRow) && allowMusic) return false;
             }
         }
-        if (notifCounter == 0 && onlyDelayNotifs) {
-            unlockDelay = 0;
-        }
-        // If status bar 'forever holds its peace', then allow dismissal
+        if (notifCounter == 0 && onlyDelayNotifs) unlockDelay = 0;
+        // If status bar is groovy, then allow dismissal
         return true;
     }
 
@@ -298,23 +270,20 @@ public class UnlockManager implements IXposedHookLoadPackage {
                 }
                 // Otherwise unlock with animation
                 else {
-                    if (buildVersion >= Build.VERSION_CODES.P){
+                    if (buildVersion >= Build.VERSION_CODES.P)
                         XposedHelpers.callMethod(contMediator, dismiss, (Object)null, null);
-                    } else if (buildVersion >= Build.VERSION_CODES.O) {
+                    else if (buildVersion >= Build.VERSION_CODES.O)
                         XposedHelpers.callMethod(contMediator, dismiss, (Object)null);
-                    } else if (buildVersion == Build.VERSION_CODES.N_MR1) {
+                    else if (buildVersion == Build.VERSION_CODES.N_MR1)
                         XposedHelpers.callMethod(contMediator, dismiss, false);
-                    } else  {
+                    else
                         XposedHelpers.callMethod(contMediator, dismiss);
-                    }
                 }
                 // Vibrates if intended
                 if (vibration) {
                     XposedBridge.log("Vibrating");
                     Vibrator vib = (Vibrator) AndroidAppHelper.currentApplication().getSystemService(Context.VIBRATOR_SERVICE);
-                    if (vib.hasVibrator()) {
-                        vib.vibrate(vibDuration);
-                    }
+                    if (vib.hasVibrator()) vib.vibrate(vibDuration);
                 }
                 XposedBridge.log("Unlocked Successfully");
             }
@@ -351,7 +320,7 @@ public class UnlockManager implements IXposedHookLoadPackage {
         XSharedPreferences prefs = new XSharedPreferences("com.samstenner.instantunlock", "instant_unlock_settings");
         enabled = prefs.getBoolean("enabled", true);
         revealSensitive = prefs.getBoolean("sensitive", false);
-        unlockType = prefs.getString("mode", "FORCE");
+        unlockType = prefs.getString("mode", ValueHolder.FORCE);
         fastSpeed = prefs.getBoolean("fast", true);
         allowMusic = prefs.getBoolean("music", false);
         allowDynamic = prefs.getBoolean("dynamic", false);
@@ -361,6 +330,13 @@ public class UnlockManager implements IXposedHookLoadPackage {
         vibDuration = prefs.getInt("vib_duration", 120);
         int[] arrayDelays = new int[]{0, 1, 2, 3, 5, 10};
         unlockDelay = arrayDelays[prefs.getInt("delay", 0)];
+    }
+
+    public static class ValueHolder {
+
+        public static String FORCE = "FORCE";
+        public static String REVEAL = "REVEAL";
+
     }
 
 }

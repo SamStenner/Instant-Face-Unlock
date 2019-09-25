@@ -1,26 +1,30 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
 
-
-    <style name="AppTheme.Dark" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="AppTheme.Dark" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
         <item name="colorPrimary">@color/colorTeal</item>
         <item name="colorAccent">@color/colorTeal</item>
+        <item name="android:statusBarColor">@color/colorTeal</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="AppTheme.Light" parent="ThemeOverlay.AppCompat.Light">
+    <style name="AppTheme.Light" parent="ThemeOverlay.MaterialComponents.ActionBar">
         <item name="colorPrimary">@color/colorTeal</item>
         <item name="colorAccent">@color/colorTeal</item>
+        <item name="android:statusBarColor">@color/colorTeal</item>
     </style>
 
-    <style name="AppTheme.Dark.Pixel" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="AppTheme.Dark.Pixel" parent="AppTheme.Dark">
         <item name="colorPrimary">@color/colorPixelBlue</item>
         <item name="colorAccent">@color/colorPixelBlue</item>
+        <item name="android:statusBarColor">@color/colorPixelBlue</item>
     </style>
 
-    <style name="AppTheme.Light.Pixel" parent="ThemeOverlay.AppCompat.Light">
+    <style name="AppTheme.Light.Pixel" parent="AppTheme.Light">
         <item name="colorPrimary">@color/colorPixelBlue</item>
         <item name="colorAccent">@color/colorPixelBlue</item>
+        <item name="android:statusBarColor">@color/colorPixelBlue</item>
     </style>
 
 
