@@ -1,7 +1,7 @@
 # Instant Face Unlock
 
 Description:
-Unlocks your phone as soon as face scan is complete
+Unlocks your phone as soon as face scan is complete. Works on Android 5.1 - 8.1
 
 ## Installation
 
