@@ -15,5 +15,3 @@ Note: If the app installs to an SD Card, you need to move it to your internal st
 ## Other
 
 Twitter: https://twitter.com/SamOfStenner
-
-Donate: https://paypal.me/samstenner
