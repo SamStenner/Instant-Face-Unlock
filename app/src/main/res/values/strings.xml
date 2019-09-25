@@ -13,7 +13,7 @@
     </string-array>
 
     <string name="pref_file">instant_unlock_settings</string>
-    <string name="twitter">https://twitter.com/SamOfStenner</string>
+    <string name="twitter">https://twitter.com/i/user/547060304</string>
     <string name="donate">https://paypal.me/samstenner</string>
     <string name="xda_thread">https://forum.xda-developers.com/xposed/modules/xposed-instant-unlock-t3688329#post74144137</string>
     <string name="github">https://github.com/SamStenner/instant-face-unlock/tree/master</string>
@@ -46,5 +46,9 @@
 
     <string name="open">Open</string>
     <string name="close">Close</string>
+
+    <string name="force">FORCE</string>
+    <string name="reveal">REVEAL</string>
+    <string name="firce">FORCE</string>
 
 </resources>
