@@ -13,5 +13,3 @@ Once installed, reboot. That's all!
 Note: If the app installs to an SD Card, you need to move it to your internal storage, and THEN do a reboot.
 
 ## Other
-
-Twitter: https://twitter.com/SamOfStenner
